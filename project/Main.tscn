@@ -1,0 +1,64 @@
+[gd_scene load_steps=7 format=3 uid="uid://dos64wrsydw3v"]
+
+[ext_resource type="PackedScene" uid="uid://fswau1dia3e6" path="res://Mob.tscn" id="1_rtvic"]
+[ext_resource type="PackedScene" uid="uid://f8e7nnwivd8w" path="res://Player.tscn" id="1_ul0pw"]
+[ext_resource type="AudioStream" uid="uid://c2yillio5cuko" path="res://art/House In a Forest Loop.ogg" id="2_5g4py"]
+[ext_resource type="PackedScene" uid="uid://cgbpu6ycpsq31" path="res://hud.tscn" id="3_868uk"]
+[ext_resource type="AudioStream" uid="uid://bf1achvrxelca" path="res://art/gameover.wav" id="3_dr5r8"]
+
+[sub_resource type="Curve2D" id="Curve2D_f0udq"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -344, -602, 0, 0, 0, 0, 376, -602, 0, 0, 0, 0, 352.084, 376.022, 0, 0, 0, 0, 16, 390, 0, 0, 0, 0, -336, 398, 0, 0, 0, 0, -344, -602)
+}
+point_count = 6
+
+[node name="Main" type="Main"]
+mob_scene = ExtResource("1_rtvic")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.972549, 0.67451, 0.505882, 1)
+
+[node name="Player" parent="." instance=ExtResource("1_ul0pw")]
+position = Vector2(240, 450)
+
+[node name="MobTimer" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="ScoreTimer" type="Timer" parent="."]
+
+[node name="StartTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="MobPath" type="Path2D" parent="."]
+position = Vector2(225.511, 428.624)
+scale = Vector2(0.655556, 0.712)
+curve = SubResource("Curve2D_f0udq")
+
+[node name="MobSpawnLocation" type="PathFollow2D" parent="MobPath"]
+position = Vector2(143.426, 384.7)
+rotation = 3.10003
+progress = 1907.15
+
+[node name="StartPosition" type="Marker2D" parent="."]
+position = Vector2(240, 450)
+
+[node name="HUD" parent="." instance=ExtResource("3_868uk")]
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_5g4py")
+volume_db = -18.834
+
+[node name="DeathSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_dr5r8")
+volume_db = -13.609
+
+[connection signal="hit" from="Player" to="." method="game_over"]
+[connection signal="timeout" from="MobTimer" to="." method="_on_MobTimer_timeout"]
+[connection signal="timeout" from="ScoreTimer" to="." method="_on_ScoreTimer_timeout"]
+[connection signal="timeout" from="StartTimer" to="." method="_on_StartTimer_timeout"]
+[connection signal="start_game" from="HUD" to="." method="new_game"]
